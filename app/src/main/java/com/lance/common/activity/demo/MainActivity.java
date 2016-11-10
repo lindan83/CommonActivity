@@ -15,6 +15,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void showDemo(View v) {
         switch (v.getId()) {
+            case R.id.btn_image_selector:
+                startActivity(new Intent(this, ImageSelectorDemoActivity.class));
+                break;
             case R.id.btn_crop_demo:
                 startActivity(new Intent(this, CropImageDemoActivity.class));
                 break;

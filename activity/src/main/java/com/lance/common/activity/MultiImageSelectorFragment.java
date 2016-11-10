@@ -211,9 +211,7 @@ public class MultiImageSelectorFragment extends Fragment {
         mFolderPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
                 mFolderAdapter.setSelectIndex(i);
-
                 final int index = i;
                 final AdapterView v = adapterView;
 
@@ -245,7 +243,6 @@ public class MultiImageSelectorFragment extends Fragment {
                         mGridView.smoothScrollToPosition(0);
                     }
                 }, 100);
-
             }
         });
     }
@@ -393,7 +390,6 @@ public class MultiImageSelectorFragment extends Fragment {
     }
 
     private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
-
         private final String[] IMAGE_PROJECTION = {
                 MediaStore.Images.Media.DATA,
                 MediaStore.Images.Media.DISPLAY_NAME,

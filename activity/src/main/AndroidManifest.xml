@@ -14,8 +14,9 @@
             android:theme="@style/AppTheme"/>
 
         <activity
-            android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity"
-            android:configChanges="orientation|screenSize"/>
+            android:name=".MultiImageSelectorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

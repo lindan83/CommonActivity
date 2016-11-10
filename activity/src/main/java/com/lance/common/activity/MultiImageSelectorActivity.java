@@ -20,8 +20,7 @@ import java.util.ArrayList;
  * 多图选择控件，支持从相册或相机中拍照选择
  * Created by lindan
  */
-public class MultiImageSelectorActivity extends AppCompatActivity
-        implements MultiImageSelectorFragment.Callback {
+public class MultiImageSelectorActivity extends AppCompatActivity implements MultiImageSelectorFragment.Callback {
     // Single choice
     public static final int MODE_SINGLE = 0;
     // Multi choice

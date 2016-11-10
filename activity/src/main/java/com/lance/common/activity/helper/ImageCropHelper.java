@@ -26,8 +26,12 @@ public class ImageCropHelper {
     public static class ImageCropParamsBuilder {
         private ImageCropActivity.CropParams cropParams;
 
-        public ImageCropParamsBuilder() {
+        private ImageCropParamsBuilder() {
             cropParams = new ImageCropActivity.CropParams();
+        }
+
+        public static ImageCropParamsBuilder create() {
+            return new ImageCropParamsBuilder();
         }
 
         public ImageCropParamsBuilder ratio(int ratioX, int ratioY) {
