@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">activity</string>
+    <string name="common_activity_crop_image_back">返回</string>
+    <string name="common_activity_crop_image_save">保存</string>
+    <string name="common_activity_crop_image_title">图片裁切</string>
+    <string name="common_activity_crop_image_load_fail">载入图片失败</string>
+    <string name="common_activity_crop_image_crop_fail">图片裁切失败</string>
+    <string name="common_activity_crop_image_save_fail">图片保存失败</string>
+    <string name="common_activity_crop_image_source_uri_not_found">没有指定源图片Uri</string>
+    <string name="common_activity_crop_image_save_uri_not_found">没有指定保存图片Uri</string>
+
+    <string name="multi_image_selector_photo_unit">张</string>
+    <string name="multi_image_selector_folder_all">所有照片</string>
+    <string name="multi_image_selector_tip_take_photo">拍摄照片</string>
+    <string name="multi_image_selector_action_done">完成</string>
+    <string name="multi_image_selector_action_button_string">%1$s(%2$d/%3$d)</string>
+    <string name="multi_image_selector_permission_rationale_write_storage">保存拍照图片需要您提供写存储权限</string>
+    <string name="multi_image_selector_error_image_not_exist">图片错误</string>
+    <string name="multi_image_selector_msg_no_camera">没有系统相机</string>
+    <string name="multi_image_selector_permission_dialog_title">权限拒绝</string>
+    <string name="multi_image_selector_permission_dialog_ok">好</string>
+    <string name="multi_image_selector_permission_dialog_cancel">拒绝</string>
+    <string name="multi_image_selector_msg_amount_limit">已经达到最高选择数量</string>
+    <string name="multi_image_selector_error_no_permission">无权限</string>
+</resources>
