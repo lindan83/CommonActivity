@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">activity</string>
     <string name="common_activity_crop_image_back">返回</string>
     <string name="common_activity_crop_image_save">保存</string>
     <string name="common_activity_crop_image_title">图片裁切</string>
