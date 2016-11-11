@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/CommonActivity.iml" filepath="$PROJECT_DIR$/CommonActivity.iml" />
       <module fileurl="file://$PROJECT_DIR$/activity/activity.iml" filepath="$PROJECT_DIR$/activity/activity.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/widget/widget.iml" filepath="$PROJECT_DIR$/widget/widget.iml" />
     </modules>
   </component>
 </project>
