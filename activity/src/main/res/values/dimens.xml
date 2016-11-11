@@ -3,4 +3,7 @@
     <dimen name="multi_image_selector_image_size">120dp</dimen>
     <dimen name="multi_image_selector_space_size">2dp</dimen>
     <dimen name="multi_image_selector_folder_cover_size">72dp</dimen>
+
+    <dimen name="image_pager_guide_view_width">6dp</dimen>
+    <dimen name="image_pager_guide_view_height">6dp</dimen>
 </resources>

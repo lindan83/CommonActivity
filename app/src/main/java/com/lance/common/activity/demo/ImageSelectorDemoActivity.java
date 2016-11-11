@@ -8,6 +8,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.lance.common.activity.MultiImageSelector;
+import com.lance.common.activity.helper.ImagePagerHelper;
 import com.lance.common.widget.MultiImageView;
 
 import java.util.ArrayList;
@@ -31,6 +32,21 @@ public class ImageSelectorDemoActivity extends AppCompatActivity {
         mSbPickAmount = (SeekBar) findViewById(R.id.sb_pick_amount);
         mTvPickAmount = (TextView) findViewById(R.id.tv_pick_amount);
         mIvImages = (MultiImageView) findViewById(R.id.miv_images);
+
+        mIvImages.setOnItemClickListener(new MultiImageView.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                ImagePagerHelper.create()
+                        .showGuideView(true)
+                        .showIndex(true)
+                        .showDelete(true)
+                        .imageList(mIvImages.getList())
+                        .initPosition(position)
+                        .returnResult(true)
+                        .requestCode(101)
+                        .show(ImageSelectorDemoActivity.this);
+            }
+        });
 
         mSbPickAmount.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -78,6 +94,11 @@ public class ImageSelectorDemoActivity extends AppCompatActivity {
                     mSelectResult = new ArrayList<>(result);
                     mIvImages.setList(mSelectResult);
                 }
+            }
+        } else if (requestCode == 101) {
+            List<String> result = ImagePagerHelper.getResults(resultCode, data);
+            if (result != null) {
+                mIvImages.setList(result);
             }
         }
     }
