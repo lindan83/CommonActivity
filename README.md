@@ -4,5 +4,5 @@
 ## 引入
 
 ```
-compile 'com.lance.common:activity:1.0.1'
+compile 'com.lance.common:activity:1.0.0'
 ```

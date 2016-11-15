@@ -7,7 +7,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0.1"
+        versionName "1.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -26,8 +26,8 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.0.0'
     testCompile 'junit:junit:4.12'
-    compile 'com.lance.common:util:1.0.2'
-    compile 'com.lance.common:widget:1.0.5'
+    compile 'com.lance.common:util:1.0.0'
+    compile 'com.lance.common:widget:1.0.0'
     compile 'com.isseiaoki:simplecropview:1.1.4'
 }
 
