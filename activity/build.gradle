@@ -28,7 +28,7 @@ dependencies {
     compile 'com.lance.common:util:0.0.1'
     compile 'com.lance.common:widget:0.0.1'
     compile 'com.isseiaoki:simplecropview:1.1.4'
-    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
 }
 
 apply from: "bintrayUpload.gradle"
