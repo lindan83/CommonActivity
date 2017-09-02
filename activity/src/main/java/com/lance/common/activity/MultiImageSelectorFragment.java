@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,28 +88,28 @@ public class MultiImageSelectorFragment extends Fragment {
     // image result data set
     private ArrayList<String> resultList = new ArrayList<>();
     // folder result data set
-    private ArrayList<Folder> mResultFolder = new ArrayList<>();
+    private ArrayList<Folder> resultFolder = new ArrayList<>();
 
-    private GridView mGridView;
-    private Callback mCallback;
+    private GridView gridView;
+    private Callback callback;
 
-    private ImageGridAdapter mImageAdapter;
-    private FolderAdapter mFolderAdapter;
+    private ImageGridAdapter imageAdapter;
+    private FolderAdapter folderAdapter;
 
-    private ListPopupWindow mFolderPopupWindow;
+    private ListPopupWindow folderPopupWindow;
 
-    private TextView mCategoryText;
-    private View mPopupAnchorView;
+    private TextView categoryText;
+    private View popupAnchorView;
 
-    private boolean hasFolderGened = false;
+    private boolean hasFolderGenerated = false;
 
-    private File mTmpFile;
+    private File tmpFile;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mCallback = (Callback) getActivity();
+            callback = (Callback) getActivity();
         } catch (ClassCastException e) {
             throw new ClassCastException("The Activity must implement MultiImageSelectorFragment.Callback interface...");
         }
@@ -130,38 +131,41 @@ public class MultiImageSelectorFragment extends Fragment {
                 resultList = tmp;
             }
         }
-        mImageAdapter = new ImageGridAdapter(getActivity(), showCamera(), 3);
-        mImageAdapter.showSelectIndicator(mode == MODE_MULTI);
+        imageAdapter = new ImageGridAdapter(getActivity(), showCamera(), 3);
+        imageAdapter.showSelectIndicator(mode == MODE_MULTI);
 
-        mPopupAnchorView = view.findViewById(R.id.footer);
+        popupAnchorView = view.findViewById(R.id.footer);
 
-        mCategoryText = (TextView) view.findViewById(R.id.category_btn);
-        mCategoryText.setText(R.string.multi_image_selector_folder_all);
-        mCategoryText.setOnClickListener(new View.OnClickListener() {
+        categoryText = (TextView) view.findViewById(R.id.category_btn);
+        categoryText.setText(R.string.multi_image_selector_folder_all);
+        categoryText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (mFolderPopupWindow == null) {
+                if (folderPopupWindow == null) {
                     createPopupFolderList();
                 }
 
-                if (mFolderPopupWindow.isShowing()) {
-                    mFolderPopupWindow.dismiss();
+                if (folderPopupWindow.isShowing()) {
+                    folderPopupWindow.dismiss();
                 } else {
-                    mFolderPopupWindow.show();
-                    int index = mFolderAdapter.getSelectIndex();
+                    folderPopupWindow.show();
+                    int index = folderAdapter.getSelectIndex();
                     index = index == 0 ? index : index - 1;
-                    mFolderPopupWindow.getListView().setSelection(index);
+                    ListView listView = folderPopupWindow.getListView();
+                    if (listView != null) {
+                        listView.setSelection(index);
+                    }
                 }
             }
         });
 
-        mGridView = (GridView) view.findViewById(R.id.grid);
-        mGridView.setAdapter(mImageAdapter);
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView = (GridView) view.findViewById(R.id.grid);
+        gridView.setAdapter(imageAdapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (mImageAdapter.isShowCamera()) {
+                if (imageAdapter.isShowCamera()) {
                     if (i == 0) {
                         showCameraAction();
                     } else {
@@ -174,7 +178,7 @@ public class MultiImageSelectorFragment extends Fragment {
                 }
             }
         });
-        mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+        gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == SCROLL_STATE_FLING) {
@@ -190,7 +194,7 @@ public class MultiImageSelectorFragment extends Fragment {
             }
         });
 
-        mFolderAdapter = new FolderAdapter(getActivity());
+        folderAdapter = new FolderAdapter(getActivity());
     }
 
     /**
@@ -200,47 +204,47 @@ public class MultiImageSelectorFragment extends Fragment {
         int[] screenSize = ScreenUtil.getScreenSize(getActivity());
         int width = screenSize[0];
         int height = (int) (screenSize[1] * (4.5f / 8.0f));
-        mFolderPopupWindow = new ListPopupWindow(getActivity());
-        mFolderPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
-        mFolderPopupWindow.setAdapter(mFolderAdapter);
-        mFolderPopupWindow.setContentWidth(width);
-        mFolderPopupWindow.setWidth(width);
-        mFolderPopupWindow.setHeight(height);
-        mFolderPopupWindow.setAnchorView(mPopupAnchorView);
-        mFolderPopupWindow.setModal(true);
-        mFolderPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        folderPopupWindow = new ListPopupWindow(getActivity());
+        folderPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.WHITE));
+        folderPopupWindow.setAdapter(folderAdapter);
+        folderPopupWindow.setContentWidth(width);
+        folderPopupWindow.setWidth(width);
+        folderPopupWindow.setHeight(height);
+        folderPopupWindow.setAnchorView(popupAnchorView);
+        folderPopupWindow.setModal(true);
+        folderPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                mFolderAdapter.setSelectIndex(i);
+                folderAdapter.setSelectIndex(i);
                 final int index = i;
                 final AdapterView v = adapterView;
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mFolderPopupWindow.dismiss();
+                        folderPopupWindow.dismiss();
 
                         if (index == 0) {
                             getActivity().getSupportLoaderManager().restartLoader(LOADER_ALL, null, mLoaderCallback);
-                            mCategoryText.setText(R.string.multi_image_selector_folder_all);
+                            categoryText.setText(R.string.multi_image_selector_folder_all);
                             if (showCamera()) {
-                                mImageAdapter.setShowCamera(true);
+                                imageAdapter.setShowCamera(true);
                             } else {
-                                mImageAdapter.setShowCamera(false);
+                                imageAdapter.setShowCamera(false);
                             }
                         } else {
                             Folder folder = (Folder) v.getAdapter().getItem(index);
                             if (null != folder) {
-                                mImageAdapter.setData(folder.images);
-                                mCategoryText.setText(folder.name);
+                                imageAdapter.setData(folder.images);
+                                categoryText.setText(folder.name);
                                 if (resultList != null && resultList.size() > 0) {
-                                    mImageAdapter.setDefaultSelected(resultList);
+                                    imageAdapter.setDefaultSelected(resultList);
                                 }
                             }
-                            mImageAdapter.setShowCamera(false);
+                            imageAdapter.setShowCamera(false);
                         }
 
-                        mGridView.smoothScrollToPosition(0);
+                        gridView.smoothScrollToPosition(0);
                     }
                 }, 100);
             }
@@ -250,14 +254,14 @@ public class MultiImageSelectorFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(KEY_TEMP_FILE, mTmpFile);
+        outState.putSerializable(KEY_TEMP_FILE, tmpFile);
     }
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
-            mTmpFile = (File) savedInstanceState.getSerializable(KEY_TEMP_FILE);
+            tmpFile = (File) savedInstanceState.getSerializable(KEY_TEMP_FILE);
         }
     }
 
@@ -272,17 +276,17 @@ public class MultiImageSelectorFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CAMERA) {
             if (resultCode == Activity.RESULT_OK) {
-                if (mTmpFile != null) {
-                    if (mCallback != null) {
-                        mCallback.onCameraShot(mTmpFile);
+                if (tmpFile != null) {
+                    if (callback != null) {
+                        callback.onCameraShot(tmpFile);
                     }
                 }
             } else {
                 // delete tmp file
-                while (mTmpFile != null && mTmpFile.exists()) {
-                    boolean success = mTmpFile.delete();
+                while (tmpFile != null && tmpFile.exists()) {
+                    boolean success = tmpFile.delete();
                     if (success) {
-                        mTmpFile = null;
+                        tmpFile = null;
                     }
                 }
             }
@@ -291,9 +295,9 @@ public class MultiImageSelectorFragment extends Fragment {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        if (mFolderPopupWindow != null) {
-            if (mFolderPopupWindow.isShowing()) {
-                mFolderPopupWindow.dismiss();
+        if (folderPopupWindow != null) {
+            if (folderPopupWindow.isShowing()) {
+                folderPopupWindow.dismiss();
             }
         }
         super.onConfigurationChanged(newConfig);
@@ -312,12 +316,12 @@ public class MultiImageSelectorFragment extends Fragment {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                 try {
-                    mTmpFile = FileUtil.createTmpFile(getActivity());
+                    tmpFile = FileUtil.createTmpFile(getActivity());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if (mTmpFile != null && mTmpFile.exists()) {
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTmpFile));
+                if (tmpFile != null && tmpFile.exists()) {
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tmpFile));
                     startActivityForResult(intent, REQUEST_CAMERA);
                 } else {
                     Toast.makeText(getActivity(), R.string.multi_image_selector_error_image_not_exist, Toast.LENGTH_SHORT).show();
@@ -367,8 +371,8 @@ public class MultiImageSelectorFragment extends Fragment {
             if (mode == MODE_MULTI) {
                 if (resultList.contains(image.path)) {
                     resultList.remove(image.path);
-                    if (mCallback != null) {
-                        mCallback.onImageUnselected(image.path);
+                    if (callback != null) {
+                        callback.onImageUnselected(image.path);
                     }
                 } else {
                     if (selectImageCount() == resultList.size()) {
@@ -376,14 +380,14 @@ public class MultiImageSelectorFragment extends Fragment {
                         return;
                     }
                     resultList.add(image.path);
-                    if (mCallback != null) {
-                        mCallback.onImageSelected(image.path);
+                    if (callback != null) {
+                        callback.onImageSelected(image.path);
                     }
                 }
-                mImageAdapter.select(image);
+                imageAdapter.select(image);
             } else if (mode == MODE_SINGLE) {
-                if (mCallback != null) {
-                    mCallback.onSingleImageSelected(image.path);
+                if (callback != null) {
+                    callback.onSingleImageSelected(image.path);
                 }
             }
         }
@@ -440,7 +444,7 @@ public class MultiImageSelectorFragment extends Fragment {
                             image = new Image(path, name, dateTime);
                             images.add(image);
                         }
-                        if (!hasFolderGened) {
+                        if (!hasFolderGenerated) {
                             // get all folder data
                             File folderFile = new File(path).getParentFile();
                             if (folderFile != null && folderFile.exists()) {
@@ -454,7 +458,7 @@ public class MultiImageSelectorFragment extends Fragment {
                                     List<Image> imageList = new ArrayList<>();
                                     imageList.add(image);
                                     folder.images = imageList;
-                                    mResultFolder.add(folder);
+                                    resultFolder.add(folder);
                                 } else {
                                     f.images.add(image);
                                 }
@@ -463,13 +467,13 @@ public class MultiImageSelectorFragment extends Fragment {
 
                     } while (data.moveToNext());
 
-                    mImageAdapter.setData(images);
+                    imageAdapter.setData(images);
                     if (resultList != null && resultList.size() > 0) {
-                        mImageAdapter.setDefaultSelected(resultList);
+                        imageAdapter.setDefaultSelected(resultList);
                     }
-                    if (!hasFolderGened) {
-                        mFolderAdapter.setData(mResultFolder);
-                        hasFolderGened = true;
+                    if (!hasFolderGenerated) {
+                        folderAdapter.setData(resultFolder);
+                        hasFolderGenerated = true;
                     }
                 }
             }
@@ -482,8 +486,8 @@ public class MultiImageSelectorFragment extends Fragment {
     };
 
     private Folder getFolderByPath(String path) {
-        if (mResultFolder != null) {
-            for (Folder folder : mResultFolder) {
+        if (resultFolder != null) {
+            for (Folder folder : resultFolder) {
                 if (TextUtils.equals(folder.path, path)) {
                     return folder;
                 }

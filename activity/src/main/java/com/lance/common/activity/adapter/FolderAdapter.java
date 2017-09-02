@@ -1,6 +1,7 @@
 package com.lance.common.activity.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.lance.common.activity.bean.Folder;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -22,41 +24,40 @@ import java.util.List;
  * Created by lindan
  */
 public class FolderAdapter extends BaseAdapter {
-    private Context mContext;
-    private LayoutInflater mInflater;
-    private List<Folder> mFolders = new ArrayList<>();
-    int mImageSize;
-    int lastSelected = 0;
+    private Context context;
+    private LayoutInflater inflater;
+    private List<Folder> folders = new ArrayList<>();
+    private int lastSelected = 0;
 
     public FolderAdapter(Context context) {
-        mContext = context;
-        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mImageSize = mContext.getResources().getDimensionPixelOffset(R.dimen.multi_image_selector_folder_cover_size);
+        this.context = context;
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //int imageSize = this.context.getResources().getDimensionPixelOffset(R.dimen.multi_image_selector_folder_cover_size);
     }
 
     /**
      * 设置数据集
      *
-     * @param folders
+     * @param folders Folders of List
      */
     public void setData(List<Folder> folders) {
         if (folders != null && folders.size() > 0) {
-            mFolders = folders;
+            this.folders = folders;
         } else {
-            mFolders.clear();
+            this.folders.clear();
         }
         notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return mFolders.size() + 1;
+        return folders.size() + 1;
     }
 
     @Override
     public Folder getItem(int i) {
         if (i == 0) return null;
-        return mFolders.get(i - 1);
+        return folders.get(i - 1);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class FolderAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         ViewHolder holder;
         if (view == null) {
-            view = mInflater.inflate(R.layout.item_list_multi_image_selector_folder, viewGroup, false);
+            view = inflater.inflate(R.layout.item_list_multi_image_selector_folder, viewGroup, false);
             holder = new ViewHolder(view);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -77,16 +78,16 @@ public class FolderAdapter extends BaseAdapter {
             if (i == 0) {
                 holder.name.setText(R.string.multi_image_selector_folder_all);
                 holder.path.setText("/sdcard");
-                holder.size.setText(String.format("%d%s",
-                        getTotalImageSize(), mContext.getResources().getString(R.string.multi_image_selector_photo_unit)));
-                if (mFolders.size() > 0) {
-                    Folder f = mFolders.get(0);
+                holder.size.setText(String.format(Locale.getDefault(), "%d%s",
+                        getTotalImageSize(), context.getResources().getString(R.string.multi_image_selector_photo_unit)));
+                if (folders.size() > 0) {
+                    Folder f = folders.get(0);
                     if (f != null) {
-                        Glide.with(mContext)
+                        Glide.with(context)
                                 .load(new File(f.cover.path))
                                 .error(R.mipmap.icon_default_error)
-                                .override(mContext.getResources().getDimensionPixelSize(R.dimen.multi_image_selector_folder_cover_size)
-                                        , mContext.getResources().getDimensionPixelSize(R.dimen.multi_image_selector_folder_cover_size))
+                                .override(context.getResources().getDimensionPixelSize(R.dimen.multi_image_selector_folder_cover_size)
+                                        , context.getResources().getDimensionPixelSize(R.dimen.multi_image_selector_folder_cover_size))
                                 .centerCrop()
                                 .into(holder.cover);
                     } else {
@@ -107,8 +108,8 @@ public class FolderAdapter extends BaseAdapter {
 
     private int getTotalImageSize() {
         int result = 0;
-        if (mFolders != null && mFolders.size() > 0) {
-            for (Folder f : mFolders) {
+        if (folders != null && folders.size() > 0) {
+            for (Folder f : folders) {
                 result += f.images.size();
             }
         }
@@ -126,7 +127,7 @@ public class FolderAdapter extends BaseAdapter {
         return lastSelected;
     }
 
-    class ViewHolder {
+    private class ViewHolder {
         ImageView cover;
         TextView name;
         TextView path;
@@ -149,17 +150,17 @@ public class FolderAdapter extends BaseAdapter {
             name.setText(data.name);
             path.setText(data.path);
             if (data.images != null) {
-                size.setText(String.format("%d%s", data.images.size(), mContext.getResources().getString(R.string.multi_image_selector_photo_unit)));
+                size.setText(String.format(Locale.getDefault(), "%d%s", data.images.size(), context.getResources().getString(R.string.multi_image_selector_photo_unit)));
             } else {
-                size.setText("*" + mContext.getResources().getString(R.string.multi_image_selector_photo_unit));
+                size.setText(TextUtils.concat("*", context.getResources().getString(R.string.multi_image_selector_photo_unit)));
             }
             if (data.cover != null) {
                 // 显示图片
-                Glide.with(mContext)
+                Glide.with(context)
                         .load(new File(data.cover.path))
                         .placeholder(R.mipmap.icon_default_error)
-                        .override(mContext.getResources().getDimensionPixelSize(R.dimen.multi_image_selector_folder_cover_size)
-                                , mContext.getResources().getDimensionPixelSize(R.dimen.multi_image_selector_folder_cover_size))
+                        .override(context.getResources().getDimensionPixelSize(R.dimen.multi_image_selector_folder_cover_size)
+                                , context.getResources().getDimensionPixelSize(R.dimen.multi_image_selector_folder_cover_size))
                         .centerCrop()
                         .into(cover);
             } else {

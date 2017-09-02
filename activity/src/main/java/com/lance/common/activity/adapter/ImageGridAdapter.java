@@ -2,7 +2,6 @@ package com.lance.common.activity.adapter;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,31 +26,27 @@ public class ImageGridAdapter extends BaseAdapter {
     private static final int TYPE_CAMERA = 0;
     private static final int TYPE_NORMAL = 1;
 
-    private Context mContext;
+    private Context context;
 
-    private LayoutInflater mInflater;
-    private boolean mShowCamera = true;
-    private boolean mShowSelectIndicator = true;
+    private LayoutInflater inflater;
+    private boolean showCamera = true;
+    private boolean showSelectIndicator = true;
 
-    private List<Image> mImages = new ArrayList<>();
-    private List<Image> mSelectedImages = new ArrayList<>();
+    private List<Image> images = new ArrayList<>();
+    private List<Image> selectedImages = new ArrayList<>();
 
-    final int mGridWidth;
+    private final int gridWidth;
 
     public ImageGridAdapter(Context context, boolean showCamera, int column) {
-        mContext = context;
-        mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.mShowCamera = showCamera;
+        this.context = context;
+        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.showCamera = showCamera;
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         int width;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            Point size = new Point();
-            wm.getDefaultDisplay().getSize(size);
-            width = size.x;
-        } else {
-            width = wm.getDefaultDisplay().getWidth();
-        }
-        mGridWidth = width / column;
+        Point size = new Point();
+        wm.getDefaultDisplay().getSize(size);
+        width = size.x;
+        gridWidth = width / column;
     }
 
     /**
@@ -60,18 +55,18 @@ public class ImageGridAdapter extends BaseAdapter {
      * @param b boolean
      */
     public void showSelectIndicator(boolean b) {
-        mShowSelectIndicator = b;
+        showSelectIndicator = b;
     }
 
     public void setShowCamera(boolean b) {
-        if (mShowCamera == b) return;
+        if (showCamera == b) return;
 
-        mShowCamera = b;
+        showCamera = b;
         notifyDataSetChanged();
     }
 
     public boolean isShowCamera() {
-        return mShowCamera;
+        return showCamera;
     }
 
     /**
@@ -80,10 +75,10 @@ public class ImageGridAdapter extends BaseAdapter {
      * @param image Image
      */
     public void select(Image image) {
-        if (mSelectedImages.contains(image)) {
-            mSelectedImages.remove(image);
+        if (selectedImages.contains(image)) {
+            selectedImages.remove(image);
         } else {
-            mSelectedImages.add(image);
+            selectedImages.add(image);
         }
         notifyDataSetChanged();
     }
@@ -97,17 +92,17 @@ public class ImageGridAdapter extends BaseAdapter {
         for (String path : resultList) {
             Image image = getImageByPath(path);
             if (image != null) {
-                mSelectedImages.add(image);
+                selectedImages.add(image);
             }
         }
-        if (mSelectedImages.size() > 0) {
+        if (selectedImages.size() > 0) {
             notifyDataSetChanged();
         }
     }
 
     private Image getImageByPath(String path) {
-        if (mImages != null && mImages.size() > 0) {
-            for (Image image : mImages) {
+        if (images != null && images.size() > 0) {
+            for (Image image : images) {
                 if (image.path.equalsIgnoreCase(path)) {
                     return image;
                 }
@@ -119,15 +114,15 @@ public class ImageGridAdapter extends BaseAdapter {
     /**
      * 设置数据集
      *
-     * @param images
+     * @param images Images of List
      */
     public void setData(List<Image> images) {
-        mSelectedImages.clear();
+        selectedImages.clear();
 
         if (images != null && images.size() > 0) {
-            mImages = images;
+            this.images = images;
         } else {
-            mImages.clear();
+            this.images.clear();
         }
         notifyDataSetChanged();
     }
@@ -139,7 +134,7 @@ public class ImageGridAdapter extends BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (mShowCamera) {
+        if (showCamera) {
             return position == 0 ? TYPE_CAMERA : TYPE_NORMAL;
         }
         return TYPE_NORMAL;
@@ -147,18 +142,18 @@ public class ImageGridAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mShowCamera ? mImages.size() + 1 : mImages.size();
+        return showCamera ? images.size() + 1 : images.size();
     }
 
     @Override
     public Image getItem(int i) {
-        if (mShowCamera) {
+        if (showCamera) {
             if (i == 0) {
                 return null;
             }
-            return mImages.get(i - 1);
+            return images.get(i - 1);
         } else {
-            return mImages.get(i);
+            return images.get(i);
         }
     }
 
@@ -172,14 +167,14 @@ public class ImageGridAdapter extends BaseAdapter {
 
         if (isShowCamera()) {
             if (i == 0) {
-                view = mInflater.inflate(R.layout.item_list_multi_image_selector_camera, viewGroup, false);
+                view = inflater.inflate(R.layout.item_list_multi_image_selector_camera, viewGroup, false);
                 return view;
             }
         }
 
         ViewHolder holder;
         if (view == null) {
-            view = mInflater.inflate(R.layout.item_list_multi_image_selector_image, viewGroup, false);
+            view = inflater.inflate(R.layout.item_list_multi_image_selector_image, viewGroup, false);
             holder = new ViewHolder(view);
         } else {
             holder = (ViewHolder) view.getTag();
@@ -192,7 +187,7 @@ public class ImageGridAdapter extends BaseAdapter {
         return view;
     }
 
-    class ViewHolder {
+    private class ViewHolder {
         ImageView image;
         ImageView indicator;
         View mask;
@@ -207,9 +202,9 @@ public class ImageGridAdapter extends BaseAdapter {
         void bindData(final Image data) {
             if (data == null) return;
             // 处理单选和多选状态
-            if (mShowSelectIndicator) {
+            if (showSelectIndicator) {
                 indicator.setVisibility(View.VISIBLE);
-                if (mSelectedImages.contains(data)) {
+                if (selectedImages.contains(data)) {
                     // 设置选中状态
                     indicator.setImageResource(R.mipmap.icon_btn_selected);
                     mask.setVisibility(View.VISIBLE);
@@ -224,10 +219,10 @@ public class ImageGridAdapter extends BaseAdapter {
             File imageFile = new File(data.path);
             if (imageFile.exists()) {
                 // 显示图片
-                Glide.with(mContext)
+                Glide.with(context)
                         .load(imageFile)
                         .placeholder(R.mipmap.icon_default_error)
-                        .override(mGridWidth, mGridWidth)
+                        .override(gridWidth, gridWidth)
                         .centerCrop()
                         .into(image);
             } else {

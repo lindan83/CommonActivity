@@ -19,53 +19,52 @@ import java.util.ArrayList;
 public class MultiImageSelector {
     public static final String EXTRA_RESULT = MultiImageSelectorActivity.EXTRA_RESULT;
 
-    private boolean mShowCamera = true;
-    private int mMaxCount = 9;
-    private int mMode = MultiImageSelectorActivity.MODE_MULTI;
-    private ArrayList<String> mOriginData;
-    private static MultiImageSelector sSelector;
+    private boolean showCamera = true;
+    private int maxCount = 9;
+    private int mode = MultiImageSelectorActivity.MODE_MULTI;
+    private ArrayList<String> originData;
+    private static MultiImageSelector selector;
 
     private MultiImageSelector() {
     }
 
     public static MultiImageSelector create() {
-        if (sSelector == null) {
-            sSelector = new MultiImageSelector();
+        if (selector == null) {
+            selector = new MultiImageSelector();
         }
-        return sSelector;
+        return selector;
     }
 
     public MultiImageSelector showCamera(boolean show) {
-        mShowCamera = show;
-        return sSelector;
+        showCamera = show;
+        return selector;
     }
 
     public MultiImageSelector count(int count) {
-        mMaxCount = count;
-        return sSelector;
+        maxCount = count;
+        return selector;
     }
 
     public MultiImageSelector single() {
-        mMode = MultiImageSelectorActivity.MODE_SINGLE;
-        return sSelector;
+        mode = MultiImageSelectorActivity.MODE_SINGLE;
+        return selector;
     }
 
     public MultiImageSelector multi() {
-        mMode = MultiImageSelectorActivity.MODE_MULTI;
-        return sSelector;
+        mode = MultiImageSelectorActivity.MODE_MULTI;
+        return selector;
     }
 
     public MultiImageSelector origin(ArrayList<String> images) {
-        mOriginData = images;
-        return sSelector;
+        originData = images;
+        return selector;
     }
 
     public void start(Activity activity, int requestCode) {
-        final Context context = activity;
-        if (hasPermission(context)) {
-            activity.startActivityForResult(createIntent(context), requestCode);
+        if (hasPermission(activity)) {
+            activity.startActivityForResult(createIntent(activity), requestCode);
         } else {
-            Toast.makeText(context, R.string.multi_image_selector_error_no_permission, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.multi_image_selector_error_no_permission, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -79,22 +78,18 @@ public class MultiImageSelector {
     }
 
     private boolean hasPermission(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            // Permission was added in API Level 16
-            return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED;
-        }
-        return true;
+        // Permission was added in API Level 16
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
     }
 
     private Intent createIntent(Context context) {
         Intent intent = new Intent(context, MultiImageSelectorActivity.class);
-        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, mShowCamera);
-        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, mMaxCount);
-        if (mOriginData != null) {
-            intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, mOriginData);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, showCamera);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, maxCount);
+        if (originData != null) {
+            intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, originData);
         }
-        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, mMode);
+        intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, mode);
         return intent;
     }
 }

@@ -47,9 +47,7 @@ public class FileUtil {
         String externalStorageState;
         try {
             externalStorageState = Environment.getExternalStorageState();
-        } catch (NullPointerException e) { // (sh)it happens (Issue #660)
-            externalStorageState = "";
-        } catch (IncompatibleClassChangeError e) { // (sh)it happens too (Issue #989)
+        } catch (NullPointerException | IncompatibleClassChangeError e) { // (sh)it happens (Issue #660)
             externalStorageState = "";
         }
         if (preferExternal && MEDIA_MOUNTED.equals(externalStorageState) && hasExternalStoragePermission(context)) {
@@ -86,6 +84,7 @@ public class FileUtil {
             try {
                 new File(appCacheDir, ".nomedia").createNewFile();
             } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         return appCacheDir;

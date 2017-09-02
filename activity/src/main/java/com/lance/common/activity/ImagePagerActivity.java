@@ -46,28 +46,23 @@ public class ImagePagerActivity extends AppCompatActivity implements View.OnClic
     public static final String INTENT_SHOW_INDEX = "show_index";
     public static final String INTENT_RETURN_RESULTS = "return_results";
 
-    private ViewPager mViewPager;
+    private ViewPager viewPager;
     //索引相关
-    private TextView mTvIndex;
-    private TextView mTvTotalCount;
-    private LinearLayout mLlIndexViews;
-
-    //删除按钮
-    private View mIvDelete;
+    private TextView tvIndex;
+    private TextView tvTotalCount;
 
     //Guide Views相关
-    private List<View> mGuideViewList = new ArrayList<>();
-    private LinearLayout mGuideGroup;
+    private List<View> guideViewList = new ArrayList<>();
 
-    public ImageSize mImageSize;//缩略图大小
-    private int mStartPos;//第一张显示的位置
-    private boolean mShowDelete;//是否显示删除
-    private boolean mShowGuideViews;//是否显示Guide View
-    private boolean mShowIndex;//是否显示索引
-    private boolean mReturnResults;//是否返回操作结果
-    private ArrayList<String> mImgUrls = new ArrayList<>();
-    private ImageAdapter mImageAdapter;
-    private ViewPager.OnPageChangeListener mOnPagerChangeListener;
+    public ImageSize imageSize;//缩略图大小
+    private int startPos;//第一张显示的位置
+    private boolean showDelete;//是否显示删除
+    private boolean showGuideViews;//是否显示Guide View
+    private boolean showIndex;//是否显示索引
+    private boolean returnResults;//是否返回操作结果
+    private ArrayList<String> imgUrls = new ArrayList<>();
+    private ImageAdapter imageAdapter;
+    private ViewPager.OnPageChangeListener onPagerChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,30 +76,30 @@ public class ImagePagerActivity extends AppCompatActivity implements View.OnClic
     }
 
     protected void initView() {
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mLlIndexViews = (LinearLayout) findViewById(R.id.ll_index_views);
-        mTvIndex = (TextView) findViewById(R.id.tv_index);
-        mTvTotalCount = (TextView) findViewById(R.id.tv_total_count);
-        mIvDelete = findViewById(R.id.iv_delete);
-        mGuideGroup = (LinearLayout) findViewById(R.id.ll_guide_group);
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
+        LinearLayout llIndexViews = (LinearLayout) findViewById(R.id.ll_index_views);
+        tvIndex = (TextView) findViewById(R.id.tv_index);
+        tvTotalCount = (TextView) findViewById(R.id.tv_total_count);
+        View ivDelete = findViewById(R.id.iv_delete);
+        LinearLayout guideGroup = (LinearLayout) findViewById(R.id.ll_guide_group);
 
-        mIvDelete.setVisibility(mShowDelete ? View.VISIBLE : View.GONE);
-        mIvDelete.setOnClickListener(mShowDelete ? this : null);
+        ivDelete.setVisibility(showDelete ? View.VISIBLE : View.GONE);
+        ivDelete.setOnClickListener(showDelete ? this : null);
 
-        if (mShowIndex) {
-            mLlIndexViews.setVisibility(View.VISIBLE);
-            mTvIndex.setText(String.valueOf(mStartPos + 1));
-            mTvTotalCount.setText(String.valueOf(mImgUrls.size()));
+        if (showIndex) {
+            llIndexViews.setVisibility(View.VISIBLE);
+            tvIndex.setText(String.valueOf(startPos + 1));
+            tvTotalCount.setText(String.valueOf(imgUrls.size()));
         } else {
-            mLlIndexViews.setVisibility(View.GONE);
+            llIndexViews.setVisibility(View.GONE);
         }
-        mViewPager.setAdapter(mImageAdapter);
-        mViewPager.setCurrentItem(mStartPos);
+        viewPager.setAdapter(imageAdapter);
+        viewPager.setCurrentItem(startPos);
 
-        if (mShowGuideViews) {
-            mGuideGroup.setVisibility(View.VISIBLE);
-            addGuideView(mGuideGroup, mStartPos, mImgUrls);
-            mViewPager.addOnPageChangeListener(mOnPagerChangeListener = new ViewPager.OnPageChangeListener() {
+        if (showGuideViews) {
+            guideGroup.setVisibility(View.VISIBLE);
+            addGuideView(guideGroup, startPos, imgUrls);
+            viewPager.addOnPageChangeListener(onPagerChangeListener = new ViewPager.OnPageChangeListener() {
                 @Override
                 public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -112,10 +107,10 @@ public class ImagePagerActivity extends AppCompatActivity implements View.OnClic
 
                 @Override
                 public void onPageSelected(int position) {
-                    mTvIndex.setText(String.valueOf(position + 1));
-                    mStartPos = position;
-                    for (int i = 0; i < mGuideViewList.size(); i++) {
-                        mGuideViewList.get(i).setSelected(i == position ? true : false);
+                    tvIndex.setText(String.valueOf(position + 1));
+                    startPos = position;
+                    for (int i = 0; i < guideViewList.size(); i++) {
+                        guideViewList.get(i).setSelected(i == position);
                     }
                 }
 
@@ -125,9 +120,9 @@ public class ImagePagerActivity extends AppCompatActivity implements View.OnClic
                 }
             });
         } else {
-            mGuideGroup.setVisibility(View.GONE);
-            mGuideGroup.removeAllViews();
-            mViewPager.removeOnPageChangeListener(mOnPagerChangeListener);
+            guideGroup.setVisibility(View.GONE);
+            guideGroup.removeAllViews();
+            viewPager.removeOnPageChangeListener(onPagerChangeListener);
         }
     }
 
@@ -142,19 +137,19 @@ public class ImagePagerActivity extends AppCompatActivity implements View.OnClic
 
 
     private void deleteImage() {
-        mImgUrls.remove(mStartPos);
-        mViewPager.setAdapter(null);
-        mImageAdapter.setData(mImgUrls);
-        mViewPager.setAdapter(mImageAdapter);
-        mImageAdapter.notifyDataSetChanged();
-        if (mStartPos >= mImgUrls.size()) {
-            mStartPos = mImgUrls.size() - 1;
+        imgUrls.remove(startPos);
+        viewPager.setAdapter(null);
+        imageAdapter.setData(imgUrls);
+        viewPager.setAdapter(imageAdapter);
+        imageAdapter.notifyDataSetChanged();
+        if (startPos >= imgUrls.size()) {
+            startPos = imgUrls.size() - 1;
         }
-        mViewPager.setCurrentItem(mStartPos);
-        mTvIndex.setText(String.valueOf(mStartPos + 1));
-        mTvTotalCount.setText(String.valueOf(mImgUrls.size()));
+        viewPager.setCurrentItem(startPos);
+        tvIndex.setText(String.valueOf(startPos + 1));
+        tvTotalCount.setText(String.valueOf(imgUrls.size()));
 
-        if (mImgUrls.isEmpty()) {
+        if (imgUrls.isEmpty()) {
             makeImagesReturn();
             finish();
         }
@@ -162,7 +157,7 @@ public class ImagePagerActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onBackPressed() {
-        if (mReturnResults) {
+        if (returnResults) {
             makeImagesReturn();
         }
         super.onBackPressed();
@@ -171,7 +166,7 @@ public class ImagePagerActivity extends AppCompatActivity implements View.OnClic
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mReturnResults) {
+            if (returnResults) {
                 makeImagesReturn();
             }
         }
@@ -180,7 +175,7 @@ public class ImagePagerActivity extends AppCompatActivity implements View.OnClic
 
     private void makeImagesReturn() {
         Intent intent = new Intent();
-        intent.putStringArrayListExtra(INTENT_IMG_URLS, mImgUrls);
+        intent.putStringArrayListExtra(INTENT_IMG_URLS, imgUrls);
         setResult(RESULT_OK, intent);
     }
 
@@ -191,42 +186,42 @@ public class ImagePagerActivity extends AppCompatActivity implements View.OnClic
         }
 
         //第一张显示的位置
-        mStartPos = intent.getIntExtra(INTENT_POSITION, 1);
+        startPos = intent.getIntExtra(INTENT_POSITION, 1);
         //图片集合
-        mImgUrls.addAll(intent.getStringArrayListExtra(INTENT_IMG_URLS));
+        imgUrls.addAll(intent.getStringArrayListExtra(INTENT_IMG_URLS));
         //缩略图大小
-        mImageSize = (ImageSize) intent.getSerializableExtra(INTENT_IMAGE_SIZE);
+        imageSize = (ImageSize) intent.getSerializableExtra(INTENT_IMAGE_SIZE);
         //是否显示删除
-        mShowDelete = intent.getBooleanExtra(INTENT_SHOW_DELETE, false);
+        showDelete = intent.getBooleanExtra(INTENT_SHOW_DELETE, false);
         //是否显示Guide View
-        mShowGuideViews = intent.getBooleanExtra(INTENT_SHOW_GUIDE_VIEWS, true);
+        showGuideViews = intent.getBooleanExtra(INTENT_SHOW_GUIDE_VIEWS, true);
         ////是否显示索引
-        mShowIndex = intent.getBooleanExtra(INTENT_SHOW_INDEX, true);
+        showIndex = intent.getBooleanExtra(INTENT_SHOW_INDEX, true);
         //是否返回操作结果
-        mReturnResults = intent.getBooleanExtra(INTENT_RETURN_RESULTS, false);
+        returnResults = intent.getBooleanExtra(INTENT_RETURN_RESULTS, false);
     }
 
     private void addGuideView(LinearLayout guideGroup, int startPos, ArrayList<String> imgUrls) {
         if (imgUrls != null && imgUrls.size() > 0) {
-            mGuideViewList.clear();
+            guideViewList.clear();
             for (int i = 0; i < imgUrls.size(); i++) {
                 View view = new View(this);
                 view.setBackgroundResource(R.drawable.image_pager_selector_guide);
-                view.setSelected(i == startPos ? true : false);
+                view.setSelected(i == startPos);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         getResources().getDimensionPixelSize(R.dimen.image_pager_guide_view_width),
                         getResources().getDimensionPixelSize(R.dimen.image_pager_guide_view_height));
                 layoutParams.setMargins(10, 0, 0, 0);
                 guideGroup.addView(view, layoutParams);
-                mGuideViewList.add(view);
+                guideViewList.add(view);
             }
         }
     }
 
     protected void initVariable() {
-        mImageAdapter = new ImageAdapter(this);
-        mImageAdapter.setData(mImgUrls);
-        mImageAdapter.setImageSize(mImageSize);
+        imageAdapter = new ImageAdapter(this);
+        imageAdapter.setData(imgUrls);
+        imageAdapter.setImageSize(imageSize);
 
         getIntentData();
     }

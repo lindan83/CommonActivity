@@ -71,7 +71,7 @@ public class ImagePagerHelper {
         }
 
         public ImagePagerParamsBuilder imageSingle(String imageUrl) {
-            ArrayList imageList = new ArrayList(1);
+            ArrayList<String> imageList = new ArrayList<>(1);
             imageList.add(imageUrl);
             return imageList(imageList);
         }
@@ -116,7 +116,7 @@ public class ImagePagerHelper {
                     ((Fragment) object).startActivity(intent);
                 } else if (object instanceof android.support.v4.app.Fragment) {
                     ((android.support.v4.app.Fragment) object).startActivity(intent);
-                } else if (object instanceof Context) {
+                } else {
                     ((Context) object).startActivity(intent);
                 }
             }
@@ -134,7 +134,7 @@ public class ImagePagerHelper {
                 intent = new Intent((Context) object, ImagePagerActivity.class);
             }
             if (intent != null) {
-                intent.putExtra(ImagePagerActivity.INTENT_IMG_URLS, new ArrayList(builder.params.imageUrls));
+                intent.putExtra(ImagePagerActivity.INTENT_IMG_URLS, new ArrayList<>(builder.params.imageUrls));
                 intent.putExtra(ImagePagerActivity.INTENT_POSITION, builder.params.initPosition);
                 intent.putExtra(ImagePagerActivity.INTENT_SHOW_INDEX, builder.params.showIndex);
                 intent.putExtra(ImagePagerActivity.INTENT_SHOW_DELETE, builder.params.showDelete);

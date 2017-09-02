@@ -50,8 +50,8 @@ public class MultiImageSelectorActivity extends AppCompatActivity implements Mul
     private static final int DEFAULT_IMAGE_SIZE = 9;
 
     private ArrayList<String> resultList = new ArrayList<>();
-    private Button mSubmitButton;
-    private int mDefaultCount = DEFAULT_IMAGE_SIZE;
+    private Button submitButton;
+    private int defaultCount = DEFAULT_IMAGE_SIZE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,18 +74,18 @@ public class MultiImageSelectorActivity extends AppCompatActivity implements Mul
         }
 
         final Intent intent = getIntent();
-        mDefaultCount = intent.getIntExtra(EXTRA_SELECT_COUNT, DEFAULT_IMAGE_SIZE);
+        defaultCount = intent.getIntExtra(EXTRA_SELECT_COUNT, DEFAULT_IMAGE_SIZE);
         final int mode = intent.getIntExtra(EXTRA_SELECT_MODE, MODE_MULTI);
         final boolean isShow = intent.getBooleanExtra(EXTRA_SHOW_CAMERA, true);
         if (mode == MODE_MULTI && intent.hasExtra(EXTRA_DEFAULT_SELECTED_LIST)) {
             resultList = intent.getStringArrayListExtra(EXTRA_DEFAULT_SELECTED_LIST);
         }
 
-        mSubmitButton = (Button) findViewById(R.id.commit);
+        submitButton = (Button) findViewById(R.id.commit);
         if (mode == MODE_MULTI) {
             updateDoneText(resultList);
-            mSubmitButton.setVisibility(View.VISIBLE);
-            mSubmitButton.setOnClickListener(new View.OnClickListener() {
+            submitButton.setVisibility(View.VISIBLE);
+            submitButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (resultList != null && resultList.size() > 0) {
@@ -100,12 +100,12 @@ public class MultiImageSelectorActivity extends AppCompatActivity implements Mul
                 }
             });
         } else {
-            mSubmitButton.setVisibility(View.GONE);
+            submitButton.setVisibility(View.GONE);
         }
 
         if (savedInstanceState == null) {
             Bundle bundle = new Bundle();
-            bundle.putInt(MultiImageSelectorFragment.EXTRA_SELECT_COUNT, mDefaultCount);
+            bundle.putInt(MultiImageSelectorFragment.EXTRA_SELECT_COUNT, defaultCount);
             bundle.putInt(MultiImageSelectorFragment.EXTRA_SELECT_MODE, mode);
             bundle.putBoolean(MultiImageSelectorFragment.EXTRA_SHOW_CAMERA, isShow);
             bundle.putStringArrayList(MultiImageSelectorFragment.EXTRA_DEFAULT_SELECTED_LIST, resultList);
@@ -136,14 +136,14 @@ public class MultiImageSelectorActivity extends AppCompatActivity implements Mul
     private void updateDoneText(ArrayList<String> resultList) {
         int size = 0;
         if (resultList == null || resultList.size() <= 0) {
-            mSubmitButton.setText(R.string.multi_image_selector_action_done);
-            mSubmitButton.setEnabled(false);
+            submitButton.setText(R.string.multi_image_selector_action_done);
+            submitButton.setEnabled(false);
         } else {
             size = resultList.size();
-            mSubmitButton.setEnabled(true);
+            submitButton.setEnabled(true);
         }
-        mSubmitButton.setText(getString(R.string.multi_image_selector_action_button_string,
-                getString(R.string.multi_image_selector_action_done), size, mDefaultCount));
+        submitButton.setText(getString(R.string.multi_image_selector_action_button_string,
+                getString(R.string.multi_image_selector_action_done), size, defaultCount));
     }
 
     @Override

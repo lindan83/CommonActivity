@@ -261,9 +261,8 @@ public class ImageCropHelper {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
         // 创建新的图片
-        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0,
+        return Bitmap.createBitmap(bitmap, 0, 0,
                 bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        return resizedBitmap;
     }
 
     /**

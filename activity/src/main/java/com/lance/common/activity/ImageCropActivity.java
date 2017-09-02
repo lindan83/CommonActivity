@@ -21,7 +21,6 @@ import java.io.Serializable;
 
 /**
  * @author lindan
- *         <p>
  *         图像裁剪页
  */
 public class ImageCropActivity extends AppCompatActivity implements TopBar.OnClickListener {
@@ -35,16 +34,15 @@ public class ImageCropActivity extends AppCompatActivity implements TopBar.OnCli
     private static final int DEFAULT_RATIO_X = 1;
     private static final int DEFAULT_RATIO_Y = 1;
 
-    private CropImageView mViewCropImage;
-    private TopBar mTopBar;
+    private CropImageView cropImageView;
 
-    private Uri mSourceUri;
-    private Uri mSaveUri;
-    private CropParams mCropParams;
+    private Uri sourceUri;
+    private Uri saveUri;
+    private CropParams cropParams;
 
-    private LoadCallback mLoadCallback;
-    private CropCallback mCropCallback;
-    private SaveCallback mSaveCallback;
+    private LoadCallback loadCallback;
+    private CropCallback cropCallback;
+    private SaveCallback saveCallback;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,51 +55,51 @@ public class ImageCropActivity extends AppCompatActivity implements TopBar.OnCli
     protected void initView() {
         setContentView(R.layout.activity_image_crop);
 
-        mViewCropImage = (CropImageView) findViewById(R.id.view_crop_image);
-        mTopBar = (TopBar) findViewById(R.id.top_bar);
-        mTopBar.setOnClickTopBarListener(this);
-        if (mCropParams != null) {
-            if (mCropParams.ratioX > 0 && mCropParams.ratioY > 0) {
-                mViewCropImage.setCustomRatio(mCropParams.ratioX, mCropParams.ratioY);
+        cropImageView = (CropImageView) findViewById(R.id.view_crop_image);
+        TopBar topBar = (TopBar) findViewById(R.id.top_bar);
+        topBar.setOnClickTopBarListener(this);
+        if (cropParams != null) {
+            if (cropParams.ratioX > 0 && cropParams.ratioY > 0) {
+                cropImageView.setCustomRatio(cropParams.ratioX, cropParams.ratioY);
             } else {
-                mViewCropImage.setCustomRatio(DEFAULT_RATIO_X, DEFAULT_RATIO_Y);
+                cropImageView.setCustomRatio(DEFAULT_RATIO_X, DEFAULT_RATIO_Y);
             }
-            mViewCropImage.setCompressFormat(Bitmap.CompressFormat.JPEG);
-            if (mCropParams.compressQuality > 0 && mCropParams.compressQuality <= 100) {
-                mViewCropImage.setCompressQuality(mCropParams.compressQuality);
+            cropImageView.setCompressFormat(Bitmap.CompressFormat.JPEG);
+            if (cropParams.compressQuality > 0 && cropParams.compressQuality <= 100) {
+                cropImageView.setCompressQuality(cropParams.compressQuality);
             } else {
-                mViewCropImage.setCompressQuality(DEFAULT_CROP_COMPRESS_QUALITY);
+                cropImageView.setCompressQuality(DEFAULT_CROP_COMPRESS_QUALITY);
             }
-            if (mCropParams.outputMaxWidth > 0 && mCropParams.outputMaxHeight > 0) {
-                mViewCropImage.setOutputMaxSize(mCropParams.outputMaxWidth, mCropParams.outputMaxHeight);
+            if (cropParams.outputMaxWidth > 0 && cropParams.outputMaxHeight > 0) {
+                cropImageView.setOutputMaxSize(cropParams.outputMaxWidth, cropParams.outputMaxHeight);
             } else {
-                mViewCropImage.setOutputMaxSize(DEFAULT_MAX_OUTPUT_WIDTH, DEFAULT_MAX_OUTPUT_HEIGHT);
+                cropImageView.setOutputMaxSize(DEFAULT_MAX_OUTPUT_WIDTH, DEFAULT_MAX_OUTPUT_HEIGHT);
             }
-            mViewCropImage.setCropMode(mCropParams.cropMode);
+            cropImageView.setCropMode(cropParams.cropMode);
         } else {
-            mViewCropImage.setCustomRatio(DEFAULT_RATIO_X, DEFAULT_RATIO_Y);
-            mViewCropImage.setCompressQuality(DEFAULT_CROP_COMPRESS_QUALITY);
-            mViewCropImage.setOutputMaxSize(DEFAULT_MAX_OUTPUT_WIDTH, DEFAULT_MAX_OUTPUT_HEIGHT);
-            mViewCropImage.setCropMode(CropImageView.CropMode.FREE);
+            cropImageView.setCustomRatio(DEFAULT_RATIO_X, DEFAULT_RATIO_Y);
+            cropImageView.setCompressQuality(DEFAULT_CROP_COMPRESS_QUALITY);
+            cropImageView.setOutputMaxSize(DEFAULT_MAX_OUTPUT_WIDTH, DEFAULT_MAX_OUTPUT_HEIGHT);
+            cropImageView.setCropMode(CropImageView.CropMode.FREE);
         }
-        mViewCropImage.startLoad(mSourceUri, mLoadCallback);
+        cropImageView.startLoad(sourceUri, loadCallback);
     }
 
     protected void initVariable() {
-        mSourceUri = getIntent().getParcelableExtra("source_uri");
-        mSaveUri = getIntent().getParcelableExtra("save_uri");
-        mCropParams = (CropParams) getIntent().getSerializableExtra("params");
-        if (mSourceUri == null) {
+        sourceUri = getIntent().getParcelableExtra("source_uri");
+        saveUri = getIntent().getParcelableExtra("save_uri");
+        cropParams = (CropParams) getIntent().getSerializableExtra("params");
+        if (sourceUri == null) {
             ToastUtil.showShort(this, R.string.common_activity_crop_image_source_uri_not_found);
             finish();
             return;
         }
-        if (mSaveUri == null) {
+        if (saveUri == null) {
             ToastUtil.showShort(this, R.string.common_activity_crop_image_save_uri_not_found);
             finish();
         }
 
-        mLoadCallback = new LoadCallback() {
+        loadCallback = new LoadCallback() {
             @Override
             public void onSuccess() {
 
@@ -113,10 +111,10 @@ public class ImageCropActivity extends AppCompatActivity implements TopBar.OnCli
             }
         };
 
-        mCropCallback = new CropCallback() {
+        cropCallback = new CropCallback() {
             @Override
             public void onSuccess(Bitmap cropped) {
-                mViewCropImage.setImageBitmap(cropped);
+                cropImageView.setImageBitmap(cropped);
             }
 
             @Override
@@ -125,7 +123,7 @@ public class ImageCropActivity extends AppCompatActivity implements TopBar.OnCli
             }
         };
 
-        mSaveCallback = new SaveCallback() {
+        saveCallback = new SaveCallback() {
             @Override
             public void onSuccess(Uri outputUri) {
                 Intent intent = new Intent();
@@ -153,7 +151,7 @@ public class ImageCropActivity extends AppCompatActivity implements TopBar.OnCli
 
     @Override
     public void onClickRight() {
-        mViewCropImage.startCrop(mSaveUri, mCropCallback, mSaveCallback);
+        cropImageView.startCrop(saveUri, cropCallback, saveCallback);
     }
 
     public static class CropParams implements Serializable {

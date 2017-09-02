@@ -25,7 +25,7 @@
     <com.isseiaoki.simplecropview.CropImageView
         android:id="@+id/view_crop_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
         app:scv_background_color="@android:color/white"
         app:scv_crop_mode="fit_image"
